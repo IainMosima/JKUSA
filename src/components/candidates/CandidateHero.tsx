@@ -1,9 +1,8 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Badge } from '@/components/ui/badge';
-import { ChevronLeft, Twitter, Facebook, Instagram, Mail } from 'lucide-react';
+import { ChevronLeft, Twitter, Facebook, Instagram, Mail, Play } from 'lucide-react';
 import { Candidate } from '@/lib/candidates';
 
 interface CandidateHeroProps {
@@ -11,6 +10,8 @@ interface CandidateHeroProps {
 }
 
 export const CandidateHero: React.FC<CandidateHeroProps> = ({ candidate }) => {
+  const [showVideo, setShowVideo] = React.useState(false);
+  
   return (
     <section className="pt-32 pb-16 md:pb-24 bg-gradient-to-br from-jkusa-blue/30 via-background to-jkusa-green/20">
       <div className="container mx-auto px-4 md:px-6">
@@ -27,13 +28,56 @@ export const CandidateHero: React.FC<CandidateHeroProps> = ({ candidate }) => {
             transition={{ duration: 0.5 }}
             className="w-full lg:w-2/5"
           >
-            <div className="rounded-2xl overflow-hidden border border-border shadow-lg">
-              <img 
-                src={candidate.image} 
-                alt={candidate.name}
-                className="w-full aspect-[3/4] object-cover"
-              />
+            <div className="rounded-2xl overflow-hidden border border-border shadow-lg mb-4">
+              {showVideo ? (
+                <div className="aspect-[3/4] w-full">
+                  <iframe 
+                    src="https://www.youtube.com/embed/YJF16UoFO6M?si=wur133Je321dkTqn&autoplay=1"
+                    title={`${candidate.name} campaign video`}
+                    className="w-full h-full"
+                    allowFullScreen
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  ></iframe>
+                </div>
+              ) : (
+                <div className="relative">
+                  <img 
+                    src={candidate.image} 
+                    alt={candidate.name}
+                    className="w-full aspect-[3/4] object-cover"
+                  />
+                  <button 
+                    onClick={() => setShowVideo(true)}
+                    className="absolute inset-0 flex items-center justify-center bg-black/50 hover:bg-black/60 transition-colors group"
+                    aria-label="Play campaign video"
+                  >
+                    <div className="h-20 w-20 rounded-full bg-jkusa-red flex items-center justify-center group-hover:scale-110 transition-transform">
+                      <Play className="h-10 w-10 text-white ml-1" fill="white" />
+                    </div>
+                    <span className="absolute bottom-8 text-white font-medium text-lg">Watch Campaign Video</span>
+                  </button>
+                </div>
+              )}
             </div>
+            
+            {!showVideo && (
+              <button 
+                onClick={() => setShowVideo(true)}
+                className="w-full py-3 flex items-center justify-center gap-2 bg-jkusa-red text-white rounded-md hover:bg-jkusa-red/90 transition-colors"
+              >
+                <Play className="h-5 w-5" fill="white" />
+                Watch Campaign Video
+              </button>
+            )}
+            
+            {showVideo && (
+              <button 
+                onClick={() => setShowVideo(false)}
+                className="w-full py-3 flex items-center justify-center gap-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition-colors"
+              >
+                Show Candidate Photo
+              </button>
+            )}
           </motion.div>
           
           <motion.div
