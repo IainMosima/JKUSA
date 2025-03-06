@@ -1,19 +1,31 @@
-
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { motion, useAnimation, useInView } from 'framer-motion';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 export const Hero: React.FC = () => {
   const controls = useAnimation();
   const ref = useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, { once: true });
+  const [showVideo, setShowVideo] = useState(false);
 
   useEffect(() => {
     if (isInView) {
       controls.start('visible');
     }
   }, [controls, isInView]);
+
+  // Disable body scroll when video modal is open
+  useEffect(() => {
+    if (showVideo) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [showVideo]);
 
   const scrollToContent = () => {
     const element = document.getElementById('main-content');
@@ -92,6 +104,17 @@ export const Hero: React.FC = () => {
                 View Candidates
               </motion.a>
             </Link>
+            <button 
+              onClick={() => setShowVideo(true)} 
+              className="px-8 py-3 bg-jkusa-blue text-white font-medium rounded-md shadow-lg hover:bg-jkusa-blue/90 transition-colors"
+            >
+              <motion.span
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                Watch Video
+              </motion.span>
+            </button>
             <Link to="/submit" className="px-8 py-3 bg-transparent border border-jkusa-red text-jkusa-red font-medium rounded-md hover:bg-jkusa-red/10 transition-colors">
               <motion.a
                 whileHover={{ scale: 1.05 }}
@@ -102,6 +125,30 @@ export const Hero: React.FC = () => {
             </Link>
           </motion.div>
         </motion.div>
+
+        {/* Video Modal */}
+        {showVideo && (
+          <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4">
+            <div className="relative w-full max-w-4xl mx-auto">
+              <button 
+                onClick={() => setShowVideo(false)}
+                className="absolute -top-12 right-0 text-white hover:text-jkusa-red transition-colors"
+                aria-label="Close video"
+              >
+                <X className="h-8 w-8" />
+              </button>
+              <div className="relative pb-[56.25%] h-0 rounded-lg overflow-hidden">
+                <iframe 
+                  className="absolute top-0 left-0 w-full h-full"
+                  src="https://www.youtube.com/embed/YJF16UoFO6M?si=wur133Je321dkTqn" 
+                  title="JKUSA Video"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                  allowFullScreen
+                ></iframe>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Scroll Down Indicator */}
         <motion.div
